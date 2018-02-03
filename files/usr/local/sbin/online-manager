@@ -15,7 +15,16 @@ INTERVAL="15"
 IP="9.9.9.9"
 LOGFILE="/var/log/online-monitor.log"
 
+# --- signal handler   ------------------------------------------------------
+
+term_handler() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S'): end online-monitor" >> "$LOGFILE"
+  exit 0
+}
+
 # --- main program   --------------------------------------------------------
+
+trap term_handler SIGTERM SIGINT
 
 status="unknown"
 echo "$(date '+%Y-%m-%d %H:%M:%S'): start online-monitor" >> "$LOGFILE"
@@ -30,6 +39,7 @@ while true; do
     if [ "$status" != "offline" ]; then
       echo "$(date '+%Y-%m-%d %H:%M:%S'): offline" >> "$LOGFILE"
       status="offline"
+    fi
   fi
   sleep "$INTERVAL"
 done
