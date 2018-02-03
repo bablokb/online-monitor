@@ -1,0 +1,37 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------
+# This script checks and logs the online-status.
+#
+# Author: Bernhard Bablok
+# License: GPL3
+#
+# Website: https://github.com/bablokb/online-manager
+#
+# ---------------------------------------------------------------------------
+
+# --- configuration   -------------------------------------------------------
+
+INTERVAL="15"
+IP="9.9.9.9"
+LOGFILE="/var/log/online-monitor.log"
+
+# --- main program   --------------------------------------------------------
+
+status="unknown"
+echo "$(date '+%Y-%m-%d %H:%M:%S'): start online-monitor" >> "$LOGFILE"
+
+while true; do
+  if ping -c 1 "$IP" > /dev/null; then
+    if [ "$status" != "online" ]; then
+      echo "$(date '+%Y-%m-%d %H:%M:%S'): online" >> "$LOGFILE"
+      status="online"
+    fi
+  else
+    if [ "$status" != "offline" ]; then
+      echo "$(date '+%Y-%m-%d %H:%M:%S'): offline" >> "$LOGFILE"
+      status="offline"
+  fi
+  sleep "$INTERVAL"
+done
+
+echo "$(date '+%Y-%m-%d %H:%M:%S'): end online-monitor" >> "$LOGFILE"

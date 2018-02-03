@@ -1,0 +1,30 @@
+#!/bin/bash
+# --------------------------------------------------------------------------
+# This script installs files and services specific to this project.
+#
+# Author: Bernhard Bablok
+# License: GPL3
+#
+# Website: https://github.com/bablokb/online-monitor
+#
+# --------------------------------------------------------------------------
+
+# --- install specific files   ----------------------------------------------
+
+echo -e "[INFO] installing project files" 2>&1
+
+for f in `find $(dirname "$0")/../files/ -type f`; do
+  cp "$f" "${f#*files}"
+  chown root:root "${f#*files}"
+done
+chmod 755 /usr/local/sbin/online-monitor
+chmod 644 /etc/systemd/system/online-monitor.service
+
+# --- activate service   ----------------------------------------------------
+
+echo -e "[INFO] enabeling online-monitor.service" 2>&1
+systemctl enable online-monitor.service
+echo -e "[INFO] starting online-monitor.service" 2>&1
+systemctl start  online-monitor.service
+
+echo -e "[INFO] installation complete" 2>&1

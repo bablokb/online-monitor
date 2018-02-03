@@ -1,0 +1,22 @@
+# --------------------------------------------------------------------------
+# Systemd service Definition for online-monitor.service.
+#
+# The service just starts the script /usr/local/sbin/online-monitor
+#
+# Author: Bernhard Bablok
+# License: GPL3
+#
+# Website: https://github.com/bablokb/online-monitor
+#
+# --------------------------------------------------------------------------
+
+[Unit]
+Description=Monitor online-status
+After=multi-user.target
+ 
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/online-monitor
+
+[Install]
+WantedBy=multi-user.target
