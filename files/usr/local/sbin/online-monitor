@@ -15,6 +15,25 @@ INTERVAL="15"
 IP="9.9.9.9"
 LOGFILE="/var/log/online-monitor.log"
 
+# --- event handler    ------------------------------------------------------
+
+on_online() {
+ :
+}
+
+on_offline() {
+ :
+ # sometimes because of a buggy firmware wlan0 pretends to be up, so:
+ #   echo "$(date '+%Y-%m-%d %H:%M:%S'): restarting wlan0" >> "$LOGFILE"
+ #   ifdown wlan0; ifup wlan0
+ # or
+ #   ip link set wlan0 down; ip link set wlan0 up
+ #
+ # or if the link is down, just bring it up again
+ #   echo "$(date '+%Y-%m-%d %H:%M:%S'): set wlan0 to up" >> "$LOGFILE"
+ #   ip link show wlan0 | grep -q "wlan0:.*state DOWN" && ip link set wlan0 up
+}
+
 # --- signal handler   ------------------------------------------------------
 
 term_handler() {
@@ -34,11 +53,13 @@ while true; do
     if [ "$status" != "online" ]; then
       echo "$(date '+%Y-%m-%d %H:%M:%S'): online" >> "$LOGFILE"
       status="online"
+      on_online
     fi
   else
     if [ "$status" != "offline" ]; then
       echo "$(date '+%Y-%m-%d %H:%M:%S'): offline" >> "$LOGFILE"
       status="offline"
+      on_offline
     fi
   fi
   sleep "$INTERVAL"
