@@ -49,7 +49,15 @@ status="unknown"
 echo "$(date '+%Y-%m-%d %H:%M:%S'): start online-monitor" >> "$LOGFILE"
 
 while true; do
-  if ping -c 1 "$IP" > /dev/null; then
+  success="false"
+  for i in 1 2 3; do
+    if ping -c 1 "$IP" > /dev/null; then
+      success="true"
+      break
+      sleep 2
+    fi
+  done
+  if [ "$success" = "true" ]; then
     if [ "$status" != "online" ]; then
       echo "$(date '+%Y-%m-%d %H:%M:%S'): online" >> "$LOGFILE"
       status="online"
